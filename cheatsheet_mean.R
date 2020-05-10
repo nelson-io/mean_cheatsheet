@@ -1,40 +1,42 @@
 # INTERVALO DE CONFIANZA PARA PROPORCIONES
 
-# prop conf int u = .4, n = 1600, conf = .99
-phat <- .423
-n <- 1000
-conf <-  .95
-#lower bound; upper bound
+int_conf_prop <- function(phat, n, conf, use.Z = F){
+  if(!use.Z){
+    empiric <- qt(conf + (1 - conf) / 2, n)
+  } else{
+    empiric <- qnorm(conf + (1 - conf) / 2)
+  }
+  
+  min <- phat - empiric * sqrt((phat*(1-phat)/n))
+  max <- phat + empiric * sqrt((phat*(1-phat)/n))
 
-if(n >= 30) {
-  z <- qnorm(conf + (1 - conf) / 2)
-} else {
-  z <- qt(conf + (1 - conf) / 2, n)
+ return(data.frame(min = min,
+                   max = max))
+  
 }
 
-data.frame( min = phat - z * sqrt((phat*(1-phat)/n)),
-              max = phat + z * sqrt((phat*(1-phat)/n)))
+int_conf_prop(phat = .423,n = 1000,conf = .95,use.Z = T)
 
-rm(list = ls())
+
 
 # INTERVALO DE CONFIANZA EN MEDIA
 
-n <- 9
-uhat <- 0
-desv <- .0365
-conf <- .90
-
-
-if(n >= 30) {
-  z <- qnorm(conf + (1 - conf) / 2)
-} else {
-  z <- qt(conf + (1 - conf) / 2, n)
+int_conf_mean <- function(uhat,desv, n, conf, use.Z = F){
+  if(!use.Z){
+    empiric <- qt(conf + (1 - conf) / 2, n)
+  } else{
+    empiric <- qnorm(conf + (1 - conf) / 2)
+  }
+  
+  min <- uhat - empiric * (desv/sqrt(n))
+  max <- uhat + empiric * (desv/sqrt(n))
+  
+  return(data.frame(min = min,
+                    max = max))
+  
 }
 
-data.frame( min = uhat - z * (desv/sqrt(n)),
-            max = uhat + z * (desv/sqrt(n)))
-
-rm(list = ls())
+int_conf_mean(uhat = 0,desv = .0365,n = 9,conf = .9,use.Z = F)
 
 
 ######### HIPOTHESIS TESTING
